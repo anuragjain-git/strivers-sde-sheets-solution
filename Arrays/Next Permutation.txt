@@ -1,0 +1,60 @@
+Question: https://leetcode.com/problems/next-permutation
+
+/* 
+
+example num = 3 1 4 2 0, next permutation would be 3 2 0 1 4 
+
+
+1. Find the longer prefix match from end.
+    In above example longer prefix from the end is 4 > 2 > 0
+2. From the prefix find someone slightly greater than 1 (here 1 is the breaking point)
+    The prefix breaks at 1. ( 1 !> 4 )
+3. Swap slightly greater than 1 value with 1.
+    now num = 3 2 4 1 0, now the longer prefix is still of same length 4 > 1 > 0
+4. To get the next permutation we just have to reverse the prefix.
+    num = 3 2 0 1 4 is the next permutation
+    ( input was 3 1 4 2 0, next permutation is slightly greater than input. ) 
+
+Time Complexity = O(3N)
+Space Complexity = O(1)
+
+*/
+
+
+class Solution {
+    public void nextPermutation(int[] nums) {
+        int index = -1;
+        int length = nums.length;
+        for(int i = length-2; i >= 0; i--) {
+            if(nums[i] < nums[i+1]) {
+                index = i;
+                break;
+            }
+        }
+        if(index == -1) {
+            reverse(nums, 0, nums.length-1);
+            return;
+        }
+        for(int i = length - 1; i > index; i--) {
+            if(nums[i] > nums[index]) {
+                swap(nums, i, index);
+                reverse(nums, index+1, nums.length-1);
+                break;
+            }
+        }
+    }
+
+    public void reverse(int nums[], int i, int j) {
+        while(i < j){
+            swap(nums, i, j);
+            i++;
+            j--;
+        }
+    }
+
+    public void swap(int nums[], int i, int j) {
+        int temp = nums[j];
+        nums[j] = nums[i];
+        nums[i] = temp;
+    }
+}
