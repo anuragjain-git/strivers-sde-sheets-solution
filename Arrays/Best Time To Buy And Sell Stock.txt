@@ -1,5 +1,13 @@
 QUESTION : https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 
+/*
+    1. let minimum price is prices[0]
+    2. keep track of minimum price of that stock 
+    3. subtract currect day stock price by earlier minimum price of the stock
+    4. keep track of maximum profit 
+*/
+
+
 class Solution {
     public int maxProfit(int[] prices) {
         int minimum = prices[0];
