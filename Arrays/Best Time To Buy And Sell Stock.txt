@@ -1,0 +1,17 @@
+QUESTION : https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        int minimum = prices[0];
+        int profit = 0;
+        for(int i = 1; i < prices.length; i++) {
+            int currProfit = prices[i] - minimum;
+            if(currProfit > 0 && profit < currProfit) {
+                profit = currProfit;
+            }
+            if(prices[i] < minimum)
+                minimum = prices[i];
+        }
+        return profit;
+    }
+}
