@@ -1,0 +1,48 @@
+QUESTION : https://leetcode.com/problems/maximum-subarray
+
+
+/*
+    BRUTE -
+    T(n) = O(N^3)
+    S(n) = O(1)
+
+    maxVal = - max_int
+        for(i = 0 to n)
+            for(j = i to n)
+                sum = 0
+                for(k = i to j)
+                    sum+=arr[k]
+                maxVal = max(sum,maxVal)
+
+    BETTER -
+    T(n) = (N^2)
+    S(n) = (1)
+
+    maxVal = - max_int
+        for(i = 0 to n)
+            sum = 0
+            for(j = i to n)
+                sum+=arr[j]
+            maxVal = max(sum,maxVal)
+*/
+
+/*
+    OPTIMAL - (Kadan's Algorithm')
+    T(n) = O(N)
+    S(n) = O(1)
+*/
+
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int max = Integer.MIN_VALUE;
+        int sum = 0;
+        for(int i = 0; i < nums.length; i++) {
+            sum+=nums[i];
+            if(max < sum)
+                max = sum;
+            if(sum < 0)
+                sum = 0;
+        }
+        return max;
+    }
+}
