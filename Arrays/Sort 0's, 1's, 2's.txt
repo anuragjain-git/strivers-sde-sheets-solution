@@ -1,0 +1,67 @@
+QUESTION : https://leetcode.com/problems/sort-colors/
+
+
+/*
+    BRUTE -
+    T(n) : O(Any Sortimg algorithm you use)
+
+    BETTER -
+    T(n) = O(2N)
+    S(n) = O(1)
+
+    By taking three variable to count number of 0's, 1's and 2's.
+    Itereate through the nums array and add numbers of 0's, 1's and 2's calculated.
+*/
+
+/* 
+
+    Optimal Solution (Dutch National Flag Algorithm)
+    T(n) = O(N)
+    S(n) = O(1)
+
+    0 to low is shorted
+    low to mid is shorted (low will be pointing to the first 1)
+    mid to high is not shorted (initially we are taking mid as 0 and high as last index)
+        if mid is 0 
+            swap low,mid
+            low++, mid++
+        if mid is 1
+            dont move low, mid++
+        if mid is 2
+            swap mid, high
+            dont move mid(because while swap high may be 2, 
+            so after decreasing high we will again swap that 2 with new high), high--
+
+    high+1 to nums.length-1 is shorted
+
+ */
+class Solution {
+    public void sortColors(int[] nums) {
+        int low = 0;
+        int mid = 0;
+        int high = nums.length-1;
+        while(mid <= high) {
+            if(nums[mid] == 0) {
+                swap(nums, low, mid);
+                low++;
+                mid++;
+            }
+            else if(nums[mid] == 1) {
+                mid++;
+            }
+            else if(nums[mid] == 2) {
+                if(nums[high] == 2)
+                    high--;
+                else {
+                    swap(nums, mid, high);
+                    high--;
+                }
+            }
+        }
+    }
+    public void swap(int nums[], int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
