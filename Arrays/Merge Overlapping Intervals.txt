@@ -1,0 +1,63 @@
+QUESTION : https://leetcode.com/problems/merge-intervals
+
+/*
+BRUTE -
+    T(n) = O(n*n)
+    S(n) = O(n)
+
+    intervals : [1,3],[2,6],[8,10],[15,18],[2,4]
+    Sort intervals : [1,3],[2,4],[2,6],[8,10],[15,18] , O(nlogn)
+
+    two for loop to update intervals: O(n*n)
+    first interval [1,3]
+    if 3>2 -> 
+        (1,4) 
+        update 3 to 4
+    if 4>2 -> 
+        (1,6)
+        update 4 to 6
+    if 6>8 (not greater) -> 
+        add(1,6) to result 
+        iterate again for next interval to merge or add
+*/
+
+/*
+    OPTIMAL-
+
+    T(n) = O(nlogn)
+    S(n) = O(n)
+
+    1. Sort
+    2. create a linked list to map and update intervals
+        if last index of last subarray in linked list < then first element of interval
+            add that interval to the list
+            now the last subarray in the list is this interval just added
+        else :
+            example of else : [0,5][2,8], if 5>2 then else will execute
+            in the list update 5 as max of(5,8) and work of interval [2,8] is completed
+            now check the next interval
+
+*/
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        // Sort
+        Arrays.sort(intervals, (a,b) -> Integer.compare(a[0], b[0]));
+        LinkedList<int[]> merged = new LinkedList<>();
+        for (int i = 0; i < intervals.length; i++) // for(int[] interval : intervals) 
+        {
+            int[] interval = intervals[i];
+            if(merged.isEmpty() || (interval[0] > merged.getLast()[1]))
+                merged.add(interval);
+            else merged.getLast()[1] = Math.max(merged.getLast()[1], interval[1]);
+        }
+        
+        // here we can directly write
+        // return merged.toArray(new int[merged.size()][]);
+
+        int[][] result = new int[merged.size()][];
+        for(int i = 0; i < merged.size(); i++) {
+            result[i] = merged.get(i);
+        } 
+        return result;
+    }
+}
