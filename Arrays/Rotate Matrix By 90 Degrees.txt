@@ -1,0 +1,69 @@
+QUESTION: https://leetcode.com/problems/rotate-image
+
+/*
+    BRUTE -
+    T(n) = O(N^2)
+    S(n) = O(N^2)
+
+
+           0 1 2
+    Row 0 [1,2,3]
+    Row 1 [4,5,6]
+    Row 2 [7,8,9]
+
+    We have to do :
+
+    n = 3
+
+     i  j      j  k
+    [0][0] -> [0][2]
+    [0][1] -> [1][2]            k = (n - 1) - i
+    [0][2] -> [2][2]
+
+    ansMatrix[n][n]
+    for(i=0 to n)
+        for(j=0 to n)
+            ansMatrix[j][n-1-i] = matrix[i][j] 
+
+*/
+
+/*
+    OPTIMAL -
+    T(n) = O(N^2)
+    S(n) = O(1)
+
+           0 1 2       Transpose    Reverse each row
+    Row 0 [1,2,3]       [1,4,7]      [7,4,1]
+    Row 1 [4,5,6]       [2,5,8]      [8,5,2]
+    Row 2 [7,8,9]       [3,6,9]      [9,6,3]
+
+*/
+
+class Solution {
+    public void rotate(int[][] matrix) {
+        for(int i = 0; i <= matrix.length - 2; i++) {
+            for(int j = i+1; j <= matrix.length-1; j++) {
+                swap(matrix, i, j);
+            }
+            reverse(matrix, i);
+        }
+        // i is traversing from (0 to (lastrow-1)), reverse lastrow
+        reverse(matrix, matrix.length - 1);
+    }
+    public void swap(int[][] matrix, int i, int j) {
+        int temp = matrix[i][j];
+        matrix[i][j] = matrix[j][i];
+        matrix[j][i] = temp;
+    }
+    public void reverse(int[][] matrix, int row) {
+        int i = 0;
+        int j = matrix.length-1;
+        while(i<j) {
+            int temp = matrix[row][i];
+            matrix[row][i] = matrix[row][j];
+            matrix[row][j] = temp;
+            i++;
+            j--;
+        }
+    }
+}
