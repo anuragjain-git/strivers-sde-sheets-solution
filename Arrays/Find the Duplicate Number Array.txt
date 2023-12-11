@@ -1,0 +1,75 @@
+QUESTION : https://leetcode.com/problems/find-the-duplicate-number
+
+/*
+    BRUTE -
+
+    1. Sort : O(nlogn)
+    2. traverse : 0 to n if two same number, return it. O(n)
+
+    T(n) : O(nlogn)
+    S(n) : O(1)
+*/
+
+/*
+    BETTER - 
+
+    T(n) : O(n)
+    S(n) : O(n)
+    
+    update tempArr as found at index = nums[i]
+    so if nums[i] = 0 at index 0 of tempArr we will initialise 1 
+    so if next time 1 is found in tempArr[nums[i]], value would be 1 inplace of 0
+
+    nums = [1,2,1,3]
+    tempArr[nums.size]
+    for(i = 0 to nums.length-1)
+        if(tempArr[nums[i]] == 0)  
+            tempArr[nums[i]]++
+        if(tempArr[nums[i]] == 1)
+            duplicate found
+*/
+
+/*
+
+    OPTIMAL-
+    
+    T(n) : O(n)
+    S(n) : O(1)
+
+    1. 
+    
+    take two pointer from starting element increse slow by one step and fast by 2 step 
+    if nums is [3,7,5,4,2,6,1,8,8]
+    
+    slow = nums[0]
+    fast = fast[0]
+
+    slow will go to index[slow] 
+    fast will go to two step :
+        3 -> 4 -> 2
+        index[(value of index 0) = 3 ] -> index[(value of index 3) = 4] -> index[(value of index 4) = 2]
+    
+    
+    2. 
+    
+    stop where they meet and change, fast to index 0 again
+    move both slow and fast one step and where they meet is the duplicate value
+
+*/
+class Solution {
+    public int findDuplicate(int[] nums) {
+        int slow = nums[0];
+        int fast = nums[0];
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while(slow != fast);
+        
+        fast = nums[0];
+        while(slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return fast;
+    }
+}
