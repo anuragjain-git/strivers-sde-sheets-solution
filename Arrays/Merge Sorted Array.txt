@@ -1,0 +1,41 @@
+QUESTION : https://leetcode.com/problems/merge-sorted-array
+
+/*
+    BRUTE 
+    T(n) = O(2n)
+    S(n) = O(n)
+
+    1. Take two pointer pointing to both array and compare which is smaller and add that to a
+        new array and increase the pointer.
+*/
+
+/*
+    OPTIMAL 
+    T(n) = O(2n)
+    S(n) = O(1)
+
+    we are taking largest value to the end, and decreasing the last counter.
+    if p1 or p2 is completely iterated 
+
+*/
+
+class Solution {
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int p1 = m - 1;
+        int p2 = n - 1;
+        int last = m + n - 1;
+        
+        while (p1 >= 0 && p2 >= 0) {
+            if (nums1[p1] <= nums2[p2]) {
+                nums1[last--] = nums2[p2--];
+            } else {
+                nums1[last--] = nums1[p1--];
+            }
+        }
+
+        // If there are remaining elements in nums2, copy them to nums1
+        while (p2 >= 0) {
+            nums1[last--] = nums2[p2--];
+        } 
+    }
+}
