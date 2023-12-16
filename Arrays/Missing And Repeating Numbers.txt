@@ -1,0 +1,70 @@
+QUESTION : https://www.codingninjas.com/studio/problems/873366
+
+/*
+    BRUTE - 
+    T(n) = O(n*n)
+
+    BETTER - 
+    using hashing
+    T(n) = O(2n)
+    S(n) = O(n)
+
+*/
+
+/*
+    OPTIMAL - 
+    T(n) = O(2n)
+    S(n) = O(1)
+*/
+
+import java.util.* ;
+import java.io.*; 
+import java.util.ArrayList;
+
+public class Solution {
+
+    public static int[] missingAndRepeating(ArrayList<Integer> arr, int n) {
+        
+        int xr = 0;
+        // xor (all number in arr) ^ (1 ^ 2 ^ ... ^ n) 
+        for(int i =0; i < n; i++) {
+                xr = xr ^ arr.get(i);
+                xr = xr ^ (i+1);
+        }
+
+        // find rightmost one bit 
+        // bitnum can also be written something like, 
+        // bitnum = xr & ~(xr - 1); (notsure)
+        int bitnum = 0;
+        while(true) {
+            if((xr & (1<<bitnum)) == 1)
+                break;
+            bitnum++;
+        }
+
+        // xor all number which contains 0 at position bitnum, 1 at position bitnum
+        int zero = 0;
+        int one = 0;
+        for(int i = 0; i < n; i++) {
+            if((arr.get(i) & (1<<bitnum)) != 0) {
+                one = one ^ arr.get(i);
+            }
+            else {
+                zero = zero ^ arr.get(i);
+            }
+            if(((i+1) & (1<<bitnum)) != 0)
+                one = one ^ (i+1);
+            else
+                zero = zero ^ (i+1);
+        }
+
+        // check if zero have missing or repeating number
+        int count = 0;
+        for(int i = 0; i < n; i ++) {
+            if(arr.get(i) == zero)
+                count++;
+        }
+        return (count == 2) ? new int[]{one, zero} : new int[]{zero, one};
+
+    }
+}
