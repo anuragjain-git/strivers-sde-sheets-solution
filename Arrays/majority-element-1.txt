@@ -1,0 +1,70 @@
+QUESTION : https://leetcode.com/problems/majority-element
+
+/* 
+    BRUTE -
+    T(n) = O(n*n)
+    S(n) = O(1)
+
+    for i = 0 to n
+        cnt = 0
+        for j = 0 to n
+            if nums[j] == nums[i]
+                cnt++
+        if cnt > floor(n/2)
+            return nums[i]
+
+    BETTER -
+    T(n) = O(nlogn) + O(n)
+    S(n) = O(n)
+
+    using hashing
+        if value > floor(n/2)
+            return key
+*/
+
+
+/* 
+    OPTIMAL - [ Moorse Voting Algorithm ]
+    T(n) = O(n)
+    S(n) = O(1)
+
+    nums = 2, 2, 3, 4, 5, 2, 2, 5, 5, 5
+
+    1. if nums is [2, 2, 3, 4]
+    2. here 2 is not majority element as there should be atleast three 2.
+    3. we incresed count twice and then decrease count twice, count = 0
+    4. so in this subarray there is no majority element now we will take next element as 
+       majority element and repeat the same process for rest elements in nums = [5, 2, 2, 5, 5, 5]
+    
+*/
+
+class Solution {
+    public int majorityElement(int[] nums) {
+        int majorityElement = nums[0];
+        int count = 0;
+        for(int i = 0; i < nums.length; i++) {
+            if(count == 0)
+                majorityElement = nums[i];
+            if(nums[i] == majorityElement)
+                count++;
+            else
+                count--;
+        }
+ 
+    /*
+        If there may be 0 majority element
+
+        count = 0;
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] == majorityElement)
+                count++;
+        }
+        
+        if(count < floor(nums.length/2))
+            return 0; // no majority element
+
+        
+    */
+        return majorityElement;
+    }
+}
