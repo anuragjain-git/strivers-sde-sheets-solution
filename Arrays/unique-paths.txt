@@ -1,0 +1,80 @@
+QUESTION: https://leetcode.com/problems/unique-paths/
+
+/*
+
+    BRUTE, RECURSION (exponential running time)
+
+    public int uniquePaths(int m, int n) {
+        return countPaths(0, 0, m, n);
+    }
+    public int countPaths(int i, int j, int m, int n) {
+        if(i == (m-1) && j == (n-1))
+            return 1; // reach to destination
+        if(i >= m || j >= n)
+            return 0; // outside of the grid
+        else
+            return countPaths(i+1, j, m, n) + countPaths(i, j+1, m, n); // either move to bottom or right
+    }
+
+*/
+
+/*
+
+    USING DYNAMIC PROGRAMMING
+    T(n) = O(m * n)
+    S(n) = O(m * n)
+
+    public int uniquePaths(int m, int n) {
+        int dp[][] = new int[m][n];
+
+        // Initialize the first column with 1, as there is only one way to reach any cell in the first column
+        for(int i = 0; i < m; i++)
+            dp[i][0] = 1;
+        // same for first row
+        for(int i = 0; i < n; i++)
+            dp[0][i] = 1;
+
+        for(int i = 1; i < m; i++) {
+            for(int j = 1; j < n; j++) {
+                // The number of unique paths to reach dp[i][j] is 
+                // the sum of paths from the cell above and the cell to the left
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+
+*/
+
+/*
+    OPTIMAL -
+    T(n) = O(m - 1) or O(n - 1)
+    S(n) = O(1)
+
+    total steps down side = m - 1
+    total steps right side = n - 1
+    total steps = m + n - 2
+
+    It initializes variables for total steps (N), steps to move down (r), and the result (res). 
+    The result  is updated iteratively in a loop, and the final value of res represents
+     total unique paths from the top-left to the bottom-right corner in the grid.
+
+*/
+
+class Solution {
+
+    public int uniquePaths(int m, int n) {
+        // Total number of steps
+        int N = m + n - 2;
+        // Number of steps to move down (or right)
+        int r = m - 1; // or m - 1, i.e number of ways to places to select down path or right path
+        double res = 1;
+
+        // Calculate NCr using the formula (N - r + i) / i for i = 1 to r
+        for (int i = 1; i <= r; i++) {
+            res = res * (N - r + i) / i;
+        }
+
+        return (int)res;
+    }
+}
