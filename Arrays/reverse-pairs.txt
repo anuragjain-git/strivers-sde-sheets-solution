@@ -1,0 +1,127 @@
+QUESTION: https://leetcode.com/problems/reverse-pairs/
+
+/*
+    BRUTE -
+    T(n) = O(n*n)
+    S(n) = O(1)
+
+    public int reversePairs(int[] nums) {
+        int count = 0;
+        for(int i = 0; i < nums.length; i++) {
+            for(int j = i + 1; j < nums.length; j++) {
+                if(nums[i] > (2 * nums[j]))
+                    count++;
+            }
+        }
+        return count;
+    }
+
+*/
+
+/*
+    OPTIMAL -
+    
+    T(n) = O(2nlog n)
+         = division(log n) * (merge(n) + countPain(n))
+         = log n * (n + n) = O(2nlogn)
+
+    S(n) :
+
+        merge method: O(n)
+        countPairs method: O(1)
+        sort method (recursive call stack): O(log n)
+        reversePairs method (overall): O(log n)
+
+    // similar to count-inversion
+    // https://github.com/anuragjain-git/strivers-sde-sheets-solution/blob/main/Arrays/count-inversion.txt
+
+*/
+
+class Solution {
+
+    public void merge(int nums[], int left, int mid, int right) {
+        int count = 0;
+        // Find sizes of two subarrays to be merged
+        int n1 = mid - left + 1; // Size of the left subarray (n1)
+        int n2 = right - mid ; // Size of the right subarray (n2)
+
+        // Create temp arrays
+        int L[] = new int[n1];
+        int R[] = new int[n2];
+
+        // Copy data to temp arrays
+        for(int i = 0; i < n1; i++)
+            L[i] = nums[left + i];
+        for(int j = 0; j < n2; j++)
+            R[j] = nums[mid + 1 + j];
+        
+        // Initial indexes of first and second subarrays
+        int i = 0;
+        int j = 0;
+
+        // Initial index of the merged subarray 
+        int k = left;
+
+        // Merge elements from L[] and R[] back into nums[]
+        while(i < n1 && j < n2) {
+            if(L[i] <= R[j]) {
+                nums[k] = L[i]; // Copy an element from L[] to nums[]
+                i++;
+                k++;
+            }
+            else {
+                nums[k] = R[j]; // Copy an element from R[] to nums[]
+                j++;
+                k++;
+            }
+        }
+
+        // Copy remaining elements of L[] if any
+        while(i < n1) {
+            nums[k] = L[i];
+            i++;
+            k++;
+        }
+
+        // Copy remaining elements of R[] if any
+        while(j < n2) {
+            nums[k] = R[j];
+            j++;
+            k++;
+        }
+    }
+
+    // Iterate through the left subarray (from left to mid)
+    public int countPairs(int nums[], int left, int mid, int right) {
+        int count = 0;
+        int pointer = mid + 1;
+
+        for(int i = left; i <= mid; i++)  {
+            // While the pointer is within bounds of right subarray and the current element in the left subarray
+            // is greater than twice the current element(pointed by variable pointer) in the right subarray
+            while(pointer <= right && nums[i] > (long) (2L * nums[pointer])) {
+                pointer++;
+            }
+            // Update count by adding the number of elements in the right subarray that satisfy the condition
+            count += (pointer - (mid + 1));
+        }
+        return count;
+    }
+
+    public int sort(int[] nums, int left, int right) {
+        int count = 0;
+        if(left < right) {
+            int mid = (left + right) / 2;
+            count += sort(nums, left, mid);
+            count += sort(nums, mid + 1, right);
+            count += countPairs(nums, left, mid, right);
+            merge(nums, left, mid, right);
+        
+        }
+        return count;
+    }
+
+    public int reversePairs(int[] nums) {
+        return sort(nums, 0, nums.length - 1);
+    }
+}
