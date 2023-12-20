@@ -35,6 +35,23 @@ QUESTION: https://leetcode.com/problems/reverse-pairs/
     // similar to count-inversion
     // https://github.com/anuragjain-git/strivers-sde-sheets-solution/blob/main/Arrays/count-inversion.txt
 
+    Explanation :
+
+    1. Before merging we are counting pairs.
+    2. for example we have L[5, 6, 6, 8], R[1, 2, 3, 3]
+    3. for L[i] we will iterate through R, while L[i] > 2R[j]
+    4. for L[i+1] we will again iterate through j+1 where we left,
+        not j = 0 again
+    5. let me explain
+        if  
+            5 > 2*1
+            5 > 2*2
+            then 6 must also be greater than 2*1 and 2*2
+            similarly, 
+                    6 > 2*1
+                    6 > 2*2
+                    then 8 must also be greater than 2*1 and 2*2
+
 */
 
 class Solution {
