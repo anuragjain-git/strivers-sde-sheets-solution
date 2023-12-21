@@ -1,0 +1,78 @@
+QUESTION : https://leetcode.com/problems/two-sum/
+
+/*
+    BRUTE - (Loop)
+    T(n) = O(n*n)
+    S(n) = O(2) // size of temp array
+
+    public int[] twoSum(int[] nums, int target) {
+        int temp[] = new int[2];
+        int sum = 0;
+        for(int i = 0; i < nums.length; i++) {
+            for(int j = i + 1; j < nums.length; j++) {
+                if(nums[j] > target) {
+                    return temp;
+                }
+                else{
+                    sum = nums[i] + nums[j];
+                    if(sum == target){
+                        temp[0] = i;
+                        temp[1] = j;
+                    }
+                }
+            }
+        }
+        return temp;
+    }
+
+*/
+
+/*
+    OPTIMAL - (Only if array is sorted | BinarySearch)
+
+    T(n) = O(nlogn)
+    S(n) = O(1)
+
+    public int binarySearch(int[] nums, int low, int high, int newTarget) {
+        while(low<=high) {
+            int mid = (low+high)/2;
+            if(nums[mid] == newTarget) 
+                return mid;
+            else if(nums[mid] > newTarget)
+                return binarySearch(nums, low, mid-1, newTarget);
+            else
+                return binarySearch(nums, mid+1, high, newTarget);
+        }
+        return -1;
+    }
+
+    public int[] twoSum(int[] nums, int target) {
+        for(int i = 0; i < nums.length; i++) {
+            int targetIndex = binarySearch(nums, i+1, nums.length-1, (target - nums[i]));
+            if(targetIndex != -1)
+                return new int[] {i, targetIndex};
+        }
+        return new int[] {0, 0};
+    }
+        
+*/
+
+/*
+    BETTER - (HashMap)
+    T(n) = O(n)
+    S(n) = O(n)
+
+*/
+class Solution { 
+
+    public int[] twoSum(int[] nums, int target) {
+        HashMap<Integer, Integer> numToIndex = new HashMap<Integer, Integer>();
+        for(int i = 0; i < nums.length; i++) {
+            if(numToIndex.containsKey(target-nums[i]))
+                return new int[] {numToIndex.get(target - nums[i]), i};
+            else
+                numToIndex.put(nums[i], i);
+        }
+        return new int[] {};
+    }
+}
