@@ -1,0 +1,91 @@
+QUESTION - https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/1
+
+/*
+    BRUTE-
+    T(n) = O(n^3)
+    S(n) = O(1)
+     
+    int maxLen(int arr[], int n)
+    {
+        int length = 0;
+        
+        for(int i = 0; i < n; i++) {
+            for(int j = i; j < n; j++) {
+                
+                int sum = 0;
+                
+                for(int k = i; k <= j; k++)
+                    sum+=arr[k];
+                    
+                if(sum == 0)
+                    length = Math.max(length, j-i+1);
+            }
+        }
+        return length;
+    }
+    
+*/
+
+/*
+    BETTER
+    T(n) = O(n^2)
+    S(n) = O(1)
+    
+    int maxLen(int arr[], int n)
+    {
+        int length = 0;
+        
+        for(int i = 0; i < n; i++) {
+            int sum = 0;
+            for(int j = i; j < n; j++) {
+                sum+=arr[j];
+                    
+                if(sum == 0)
+                    length = Math.max(length, j-i+1);
+            }
+        }
+        return length;
+    }
+*/
+
+/*
+    OPTIMAL
+    T(n) = O(n)
+    S(n) = O(n)
+*/
+
+class GfG
+{
+    int maxLen(int arr[], int n)
+    {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        
+        int maxLength = 0;
+        int sum =0;
+        
+        for(int i = 0; i < n; i++) {
+            sum += arr[i];
+            if(sum == 0) {
+                maxLength = Math.max(maxLength, i+1);
+            }
+            // if hashmap containsKey (sum - K)
+            // from that key (i.e index) to (var i), sum = sum - K, here K is 0
+            // example : [3,-2,1,1,1,2,2], K = 1
+            // sum = 3+(-2)+1 = 2
+            // So for this sum the map contains(sum = sum - K == 1 exist)
+            // i.e 3,-2 -> 1, so length = 2 
+            if(map.containsKey(sum)) {
+                int preSumIndex = map.get(sum);
+                int length = i - preSumIndex;
+                maxLength = Math.max(maxLength, length);
+            }
+            else {
+                map.put(sum, i); // sum upto index i
+            }
+            
+        }
+        return maxLength;
+    }
+}
+
+
