@@ -1,0 +1,129 @@
+QUESTION : https://leetcode.com/problems/longest-consecutive-sequence
+
+/*
+    BRUTE - 
+    T(n) = O(n^2)
+    S(n) = O(n)
+
+    Approach:
+        For each element we will check if (element+1) is present in the array
+
+    Code:
+        public int longestConsecutive(int[] nums) {
+            int longest = 1;
+            for(int i = 0; i < nums.length; i++) {
+                int j = 0;
+                int find = nums[i]+1;
+                int newlongest = 1;
+                while(j < nums.length) {
+                    if(nums[j] == find) {
+                        newlongest++;
+                        find++;
+                        j = 0;
+                    }
+                    else {
+                        j++;
+                    }
+                }
+                if(newlongest > longest) {
+                    longest = newlongest;
+                }
+            }
+            return longest;
+        }
+*/
+
+/*
+    BETTER -
+    T(n) = O(nlogn)+O(n-1) //sort + loop(0 to n-1)
+    S(n) = O(1)
+
+    Approach:
+        1. Sort the array. (nlogn)
+        2. Traverse through the array and find continious longest consecutive sequence
+
+    Code:
+        Example:
+            [0,1,1,2]
+            [0,1,2,4,5,6,7]
+            [0,0,1,2,3,4,5,6,7,8]
+        
+        public static int longestConsecutive(int[] nums) {
+            if (nums == null || nums.length == 0) {
+                return 0;
+            }
+
+            Arrays.sort(nums);
+
+            int longest = 1;
+            int newlongest = 1;
+            
+            for (int i = 0; i < nums.length - 1; i++) {
+                int find = nums[i] + 1;
+
+                if (nums[i + 1] == find) {
+                    newlongest++;
+                } else if (nums[i + 1] != nums[i]) {  // Handle duplicate elements
+                    newlongest = 1;
+                }
+
+                if (newlongest > longest) {
+                    longest = newlongest;
+                }
+            }
+
+            return longest;
+        }
+*/
+
+/*
+    OPTIMAL -
+    T(n) = O(n+n) -> add all the element O(n) + iterate through the set
+    S(n) = O(n) -> Hashset 
+
+    Approach:
+        1. Add elements to hashset, hasset contains unique element.
+        2. if currentelement - 1, exist in the set : do nothing, because it is not the starting element
+        3. if currentelement - 1, doesn't exist : it is the starting element
+        4. do:
+                iterate through the set
+                find = currentelement + 1
+                newlongest++ , until set contains find; find++
+                longest = max(longest , find - currentelement)
+
+        // explaining: find - currentelement
+            suppose we found consecutive sequence 3,4,5,6
+            currentelement = 3
+            find = 7, we were doing find++
+            longest = 7 - 3 = 4 (i.e number of consecutive sequence: 3,4,5,6)
+
+    Code:
+*/
+
+class Solution {
+    public static int longestConsecutive(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+
+        HashSet<Integer> set = new HashSet<Integer>();
+
+        for(int num : nums) {
+            set.add(num);
+        }
+
+        int longest = 1;
+        int newlongest = 1;
+
+        for (int num : set) {
+            if (!set.contains(num - 1)) {
+                int find = num + 1;
+                while (set.contains(find)) {
+                    find++;
+                }
+                longest = Math.max(longest, find - num);
+            }
+        }
+        return longest;
+    }
+}
