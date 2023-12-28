@@ -1,0 +1,53 @@
+QUESTION : https://www.codingninjas.com/studio/problems/subarrays-with-xor-k_6826258
+
+/*
+    Brute approach would be by taking another 
+    loop k from i to j.
+
+/*
+    BETTER -
+    T(n) = O(n^2)
+    S(n) = O(1)
+
+    public static int subarraysWithSumK(int []a, int b) {
+        int count = 0;
+        for(int i = 0; i < a.length; i++)  {
+            int xor = 0;
+            for(int j = i; j < a.length; j++) {
+                xor = xor ^ a[j];
+                if(xor == b)
+                    count++;
+            }
+        }
+        return count;
+    }
+*/
+
+/*
+    OPTIMAL -
+    T(n) = O(n)
+    S(n) = O(n)
+*/
+
+import java.util.HashMap;
+public class Solution {
+    public static int subarraysWithSumK(int []a, int b) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int xr = 0;
+        map.put(0, 1);
+        int count = 0;
+        for(int i = 0; i < a.length; i++) {
+            xr = xr ^ a[i];
+            // if current xor is xr we need x for it to be equal to b
+            // i.e x ^ xr -> b
+            int x = xr ^ b;
+
+            if(map.containsKey(x))
+                count+=map.get(x);
+
+            int frequency = map.containsKey(xr) ? map.get(xr) : 0;
+            map.put(xr, frequency+1);
+        }
+        return count;
+    }
+}
