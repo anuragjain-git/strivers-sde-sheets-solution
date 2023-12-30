@@ -1,0 +1,27 @@
+QUESTION : https://leetcode.com/problems/delete-node-in-a-linked-list/
+
+/*
+    OPTIMAL SOLUTION -
+    T(n) = O(n)
+    S(n) = O(1)
+
+    GIVEN node is not the first or last node.
+
+    1. assign the value of next node in the current node(to the node which you have to remove)
+    2. point current node to the next of next node
+*/
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public void deleteNode(ListNode node) {
+        node.val = node.next.val;
+        node.next = node.next.next;
+    }
+}
