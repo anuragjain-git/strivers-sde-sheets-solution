@@ -1,0 +1,59 @@
+QUESTION : https://leetcode.com/problems/linked-list-cycle/
+
+/*
+    Using HashMap
+    T(n) = O(n)
+    S(n) = O(n)
+
+    1. Add all the node(add node not value of the node) to the hashmap.
+    2. If pointer moved to same node again return true.(loop exist)
+
+    Code -
+
+    public boolean hasCycle(ListNode head) {
+        HashMap<ListNode, Integer> map = new HashMap<>();
+        ListNode temp = head;
+        while(temp!=null && temp.next!=null) {
+            if(map.containsKey(temp)) return true;
+            else map.put(temp, 1);
+            temp = temp.next;
+        }
+        return false;
+    }
+
+*/
+
+/*
+    Optimal Solution:
+    T(n) = O(n)
+    S(n) = O(1)
+*/
+
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        while(fast!=null && fast.next!=null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            /*
+             while moving in the loop if both points to 
+             same node then loop exist(distance between 
+             then keeps decreasing by 1 at each iteration)
+            */
+            if(slow == fast) return true; 
+        }
+        return false; // if no loop found
+    }
+}
