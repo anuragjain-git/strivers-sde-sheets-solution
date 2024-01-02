@@ -1,0 +1,82 @@
+QUESTION : https://leetcode.com/problems/reverse-nodes-in-k-group/
+
+# Complexity
+- Time complexity: O(2n)
+<!-- Add your time complexity here, e.g. $$O(n)$$ -->
+
+- Space complexity: O(1)
+<!-- Add your space complexity here, e.g. $$O(n)$$ -->
+
+# Code
+```
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        
+        if(head == null || k <= 1) return head;
+
+        // create a dummy node which will point to head
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+
+        // prev is pointing to where dummy node is pointing, if we move(move not change) the prev 
+        // dummy pointing will also change
+        ListNode prev = dummy;
+        // curr will traverse to the kth node
+        ListNode curr = head;
+
+        int count = 0;
+        // count number of nodes in the linked list
+        while(head != null) {
+            head = head.next;
+            count++;
+        }
+
+        // reset head to the beginning of the list
+        head = dummy.next;
+
+        // reverse nodes in k-group
+        while(count >= k) {
+            // reverse k nodes
+
+            ListNode groupStart = prev.next;
+            // first node of the group befor reverse, it will be the last node
+            // after reverse, i.e prev of current groupStart node 
+            ListNode groupEnd = curr;
+            for(int i = 0; i < k; i++) {
+                // point to next element of curr, pointer between curr and node will be broken, 
+                // so store remaining nodes in nextNode
+                ListNode nextNode = curr.next;
+                // remove forward pointer for first node and point to prev
+                curr.next = prev.next;
+                // update the prev to where curr is pointing
+                prev.next = curr;
+                // after updating prev move curr
+                curr = nextNode;
+                // do this for k number of node
+            }
+            //  Now Update pointers for the next group
+
+            // connecting the first k-group to the remaining list
+            groupStart.next = curr;
+            // pointing prev to the starting of next kth group
+            // or you can say pointing prev curr
+            // or you can say prev and curr are again pointing to same to the new (kth + 1) node, as at first iteration
+            // both curr and prev was pointing to head
+            prev = groupEnd;
+            //decrease count kth times
+            count = count - k;
+        }
+        return dummy.next;
+    }
+}
+```
