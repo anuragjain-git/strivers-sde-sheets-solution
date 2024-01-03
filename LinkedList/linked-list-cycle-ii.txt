@@ -1,0 +1,84 @@
+QUESTION : https://leetcode.com/problems/linked-list-cycle-ii/
+
+/*
+    USING HashMap :
+
+    Approach -
+        1. create a hashmap to store nodes
+        2. iterate through the list
+        3. if map already contains that node return that node
+        4. else add it to the map
+
+    Complexity -
+        T(n) = O(n)
+        S(n) = O(n)
+
+    Code -
+        public ListNode detectCycle(ListNode head) {
+            HashMap<ListNode, Integer> map = new HashMap<>();
+            ListNode temp = head;
+            while(temp != null) {
+                if(map.containsKey(temp)) return temp;
+                else map.put(temp, 1);
+                temp = temp.next;
+            }
+            return null;
+        }
+*/
+
+
+/*
+    OPTIMAL SOLUTION - 
+    
+    Approach -
+        1. two pointer slow and fast
+        2. iterate through the list slow(move once) and fast(move twice)
+        3. if slow == fast, loop exist
+        4. point slow to head
+        5. move slow and fast one step until they collide
+        // Explaination of why doing step 5. gives us the result
+            at the starting distance between head, slow, fast is 0 and distance 
+            between slow and fast increases by 1 after each iteration,
+            and distance between head and slow also increases by 1 too.
+            
+            It means - fast has moved x steps from slow, x: distance between head and slow
+
+            But inside loop they will collide after steps y from colliding point,
+            y: steps of head to colliding node
+
+        6. the new position where they collide is the node where cycle starts
+
+    Complexity -
+        T(n) = O(n)
+        S(n) = O(n)
+*/
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        while(fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if(slow == fast) {
+                slow = head;
+                while(slow != fast) {
+                    slow = slow.next;
+                    fast = fast.next;
+                }
+                return slow;
+            }
+        }
+        return null;
+    }
+}
