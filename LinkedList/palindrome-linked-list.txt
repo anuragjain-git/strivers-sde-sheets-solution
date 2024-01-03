@@ -1,0 +1,80 @@
+QUESTION : https://leetcode.com/problems/palindrome-linked-list/
+
+/*
+    USING ArrayList
+    T(n) = O(n) + O(n/2)
+    S(n) = O(n)
+
+    public boolean isPalindrome(ListNode head) {
+        ArrayList<Integer> arr = new ArrayList<>();
+        ListNode temp = head;
+        while(temp != null) {
+            arr.add(temp.val);
+            temp = temp.next;
+        }
+        for(int i = 0; i < arr.size()/2; i++) {
+            if(arr.get(i) != arr.get(arr.size() - i - 1)) return false;
+        }
+        return true;
+    }
+
+*/
+
+/*
+    Optimal Solution 
+    T(n) = O(n/2) + O(n/2) + O(n/2)
+    S(n) = O(1)
+*/
+
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverse(ListNode ptr) {
+        ListNode pre = null;
+        ListNode next = null;
+        while(ptr != null) {
+            next = ptr.next; // next of current node
+            ptr.next = pre; // curr node will point to previous node
+            pre = ptr; // previous will point to the current node
+            ptr = next; // current will point to the next node
+        }
+        return pre;
+    }
+    public boolean isPalindrome(ListNode head) {
+        // if no element or only one element return true
+        if(head == null || head.next == null) return true;
+        
+        ListNode slow = head;
+        ListNode fast = head;
+        
+        // move slow pointer once and fast pointer twice
+        while(fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        slow.next = reverse(slow.next);
+        // slow now points to  reverse part of the list
+        slow = slow.next;
+        ListNode dummy = head;
+
+        // iterate through the reverse list, check if both are equal
+        while(slow != null) {
+            // if at any time if dummy node value is not equal 
+            // to slow node value return false
+            if(dummy.val != slow.val) return false;
+            slow = slow.next;
+            dummy = dummy.next;
+        }
+        return true;
+    }
+}
