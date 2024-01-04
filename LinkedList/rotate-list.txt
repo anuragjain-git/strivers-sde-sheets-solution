@@ -1,0 +1,88 @@
+QUESTION : https://leetcode.com/problems/rotate-list/
+
+/*
+    Other approach would be taking k node one by one from end 
+    and and joining at the starting.
+
+    But modify k for unnecessary rotation.
+    do k = k % length
+    // dont't consider unnecessary rotation
+    // like if length=3,k=4 is same as k=1
+    
+    code -
+    
+    public ListNode rotateRight(ListNode head, int k) {
+        ListNode temp = head;
+        ListNode curr = head;
+
+        if(head == null || head.next == null) return head;
+
+        int length = 1;
+        while(curr.next!= null) {
+            curr=curr.next;
+            length++;
+        }
+
+        curr = head;
+        // dont't consider unnecessary rotation
+        // like if length=3,k=4 is same as k=1
+        k = k % length;
+
+        while(k>0) {
+            while(curr.next!= null && curr.next.next != null) {
+                curr=curr.next;
+            }
+            ListNode nextNode = curr.next;
+            curr.next = null;
+            curr = nextNode;
+            curr.next = temp;
+            temp = curr;
+            k--;
+        }
+        return temp;
+    }
+*/
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if(head == null || head.next == null || k == 0) return head;
+
+        ListNode curr = head;
+
+        int length = 1;
+        while(curr.next!= null) {
+            curr=curr.next;
+            length++;
+        }
+
+        // dont't consider unnecessary rotation
+        // like if length=3,k=4 is same as k=1
+        k = k % length;
+        if(k == 0) return head;
+
+        // store last element in tail
+        ListNode tail = curr;
+        curr = head;
+
+        // move curr upto kth node from end
+        for(int i = 0; i< length - k - 1; i++) {
+            curr = curr.next;
+        }
+        // newHead is kth node from end, newHead consist of k elements
+        ListNode newHead = curr.next;
+        curr.next = null; // break the connection of curr with newHead 
+        tail.next = head; // connect the tail to head
+        // return the newHead, or change head = newhead and return head
+        return newHead;
+    }
+}
