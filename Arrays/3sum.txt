@@ -1,0 +1,93 @@
+QUESTIONS : https://leetcode.com/problems/3sum/
+
+/*
+    BRUTE -
+
+    T(n) = O(N3 * log(no. of unique triplets))
+    S(n) = O(2 * no. of the unique triplets) 
+
+    public List<List<Integer>> threeSum(int[] nums) {
+        Set<List<Integer>> st = new HashSet<>();
+
+        for(int i = 0; i < nums.length - 2; i++) {
+            for(int j = i+1; j < nums.length-1; j++) {
+                for(int k = j+1; k < nums.length; k++) {
+                    if(nums[i]+nums[j]+nums[k] == 0) {
+                        List<Integer> list = new ArrayList<>(Arrays.asList(nums[i], nums[j], nums[k]));
+                        Collections.sort(list);
+                        st.add(list);
+                    }
+                }
+            }
+        }
+        List<List<Integer>> result = new ArrayList<>(st);
+        return result; 
+    }
+
+*/
+
+/*
+    BETTER -
+
+    T(n) = O(N2 * log(no. of unique triplets))
+    S(n) = O(2 * no. of the unique triplets) + O(N)
+
+    public List<List<Integer>> threeSum(int[] nums) {
+        Set<List<Integer>> st = new HashSet<>();
+
+        for(int i = 0; i < nums.length; i++) {
+            Set<Integer> hashset = new HashSet<>();
+            for(int j = i+1; j < nums.length; j++) {
+                int third = -(nums[i] + nums[j]);
+                if(hashset.contains(third)) {
+                    List<Integer> list = new ArrayList<>(Arrays.asList(nums[i], nums[j], third));
+                    Collections.sort(list);
+                    st.add(list);
+                }
+                else
+                    hashset.add(nums[j]);
+            }
+        }
+        List<List<Integer>> result = new ArrayList<>(st);
+        return result; 
+    }
+
+*/
+
+/*
+    OPTIMAL -
+
+    T(n) = O(nlogn)+O(n^2)
+    S(n) = O(no. of quadruplets)
+*/
+
+class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(nums);
+
+        for(int i = 0; i < nums.length; i++) {
+            //remove duplicates:
+            if (i != 0 && nums[i] == nums[i - 1]) continue;
+
+            // take two moving pointer
+            int j = i + 1;
+            int k = nums.length - 1;
+            while(j < k) {
+                int sum = nums[i] + nums[j] + nums[k];
+                if(sum < 0) j++;
+                else if(sum > 0) k--;
+                else {
+                    List<Integer> list = Arrays.asList(nums[i], nums[j], nums[k]);
+                    result.add(list);
+                    j++;
+                    k--;
+                    // skip duplicate elements
+                    while (j < k && nums[j] == nums[j - 1]) j++;
+                    while (j < k && nums[k] == nums[k + 1]) k--;
+                }
+            }
+        }
+        return result;
+    }
+}
