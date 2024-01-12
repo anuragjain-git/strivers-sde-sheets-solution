@@ -1,0 +1,80 @@
+QUESTION : https://leetcode.com/problems/copy-list-with-random-pointer
+
+/*
+    Using HashMap 
+    T(n) = O(2n)
+    S(n) = O(n)[hashmap] + O(n)
+
+    public Node copyRandomList(Node head) {
+        Node temp = head;
+        HashMap<Node, Node> map = new HashMap<>();
+        // add temp node and a newnode containing temp value to hashmap
+        while(temp != null) {
+            Node newNode = new Node(temp.val);
+            map.put(temp,newNode);
+            temp = temp.next;
+        }
+        temp = head;
+        // connect all the copy node
+        while(temp!=null) {
+            Node copyNode = map.get(temp);
+            copyNode.next = map.get(temp.next);
+            copyNode.random = map.get(temp.random);
+            temp = temp.next;
+        }
+        return map.get(head);
+    }
+*/
+
+/*
+// Definition for a Node.
+class Node {
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) {
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    }
+}
+*/
+
+/*
+    OPTIMAL APPROACH , without out hashmap
+    T(n) = O(3n)
+    S(n) = O(n)
+*/
+class Solution {
+    public Node copyRandomList(Node head) {
+        // 1->2->6->9 to 1->1->2->2->6->6->9->9
+        Node temp = head;
+        while(temp!=null) {
+            Node newNode = new Node(temp.val);
+            newNode.next = temp.next;
+            temp.next = newNode;
+            temp = temp.next.next;
+        }
+        // add random to all duplicate newly added node
+        temp = head;
+        while(temp != null) {
+            if(temp.random != null) temp.next.random = temp.random.next;
+            temp = temp.next.next;
+        }
+        // all duplicate element should be connected with each other not with the original list
+        // make the original list as it was initially, 1->2->6->9
+        temp = head;
+        Node dummy = new Node(0);
+        Node res = dummy;
+        Node fast;
+        while(temp != null) {
+            fast = temp.next.next;
+            res.next = temp.next;
+            temp.next = fast;
+            res = res.next;
+            temp = fast;
+        }
+        return dummy.next;
+    }
+}
