@@ -1,0 +1,38 @@
+QUESTION : https://leetcode.com/problems/trapping-rain-water/
+
+/*
+    Two Pointer Approach
+    T(n) = O(n)
+    S(n) = O(1)
+*/
+
+class Solution {
+    public int trap(int[] height) {
+        int l = 0;
+        int r = height.length-1;
+        // store current maximum height in left side
+        int currentleftmaxheight = 0;
+        // store current maximum height in right side
+        int currentrightmaxheight = 0;
+        int water = 0;
+        while(l < r) {
+            if(height[l] <= height[r]) { // water will store only if left height <= right height
+                // keep storing current max height
+                if(height[l] > currentleftmaxheight) currentleftmaxheight = height[l];
+                // if current max height is greater that current left height (height[l]), then water can be stored
+                else water += currentleftmaxheight - height[l];
+
+                l++;
+            }
+            else { // if left height is bigger than right height
+                // store current right max height
+                if(height[r] > currentrightmaxheight) currentrightmaxheight = height[r];
+                // if current max height is greater than current right height (height[r]), then water can be stored
+                else water += currentrightmaxheight - height[r];
+
+                r--;
+            }
+        }
+        return water;
+    }
+}
