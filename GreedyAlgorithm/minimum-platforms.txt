@@ -1,0 +1,48 @@
+QUESTION - https://www.geeksforgeeks.org/problems/minimum-platforms-1587115620/1
+
+/*
+    Optimal Approach (Two Pointers)
+    T(n) = O(2nlogn) + O(2n) (sorting two array + using pointers for both array)
+    S(n) = O(1)
+    
+*/
+
+class Solution
+{
+    //Function to find the minimum number of platforms required at the
+    //railway station such that no train waits.
+    static int findPlatform(int arr[], int dep[], int n)
+    {
+        Arrays.sort(arr);
+        Arrays.sort(dep);
+        
+        // train at first arr time has taked 1 platform
+        int current_platform = 1;
+        // max platform at any instance
+        int MaxPlatform = 1;
+        
+        // as train at first arr time has taked 1 platform start checking with 2nd arrival time
+        int arrArray=1;
+        // check arr time with dep time of previous trains
+        int depArray=0;
+        
+        while(arrArray < n && depArray < n) {
+            
+            if(arr[arrArray] <= dep[depArray]) {
+                current_platform++;
+                arrArray++;
+            }
+            
+            else {
+                current_platform--; // free the platform after train leave
+                depArray++;
+            }
+            
+            if(current_platform>MaxPlatform) {
+                MaxPlatform = current_platform;
+            }
+        }
+        return MaxPlatform;
+    }
+    
+}
