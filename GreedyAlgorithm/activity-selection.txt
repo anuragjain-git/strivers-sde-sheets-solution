@@ -1,0 +1,65 @@
+QUESTION - https://www.geeksforgeeks.org/problems/activity-selection-1587115620/1
+
+/*
+    Optimal Approach
+    T(n) = O(nlogn)
+    S(n) = O(n)  
+*/
+
+class Solution
+{
+    
+    static class Activity {
+        int start;
+        int end;
+        
+        Activity(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+    }
+    
+    // The class implements the Comparator interface with the type parameter <Activity>
+    static class ActivityComparator implements Comparator<Activity> {
+        
+        @Override
+        public int compare(Activity o1, Activity o2) {
+            // Compare activity based on end times in ascending order.
+            if (o1.end > o2.end) return 1; // swap
+            else if (o1.end < o2.end) return -1; // don't swap
+            else return 0; // don't swap
+        }
+    }
+    
+    public static int activitySelection(int start[], int end[], int n)
+    {   
+        // ArrayList will store objects of type Activity
+        ArrayList<Activity> list = new ArrayList<>();
+        
+        // Create a new Activity object and add it to the list.
+        for(int i = 0; i< n; i++) {
+            list.add(new Activity(start[i], end[i]));
+        }
+        
+        // Create an instance of the ActivityComparator class.
+        ActivityComparator com = new ActivityComparator();
+        Collections.sort(list, com);
+        
+        // always selecting 1st pair 
+        int count = 1;
+        // store endtime of first pair to compare it with start timeof next pair
+        int endTime = list.get(0).end;
+        
+        // Iterate through the sorted list to find non-overlapping activities.
+        // start from second pair
+        for(int i = 1; i < n; i++) {
+            // current endTime is the endtime of "PREVIOUSLY SELECTED ACTIVITY"
+            if (list.get(i).start > endTime) { 
+                count++;
+                // update endTime
+                endTime = list.get(i).end;
+            }
+        }
+        return count;
+    }
+}
