@@ -1,0 +1,32 @@
+QUESTION - https://www.geeksforgeeks.org/problems/subset-sums2234/1
+
+/*
+    T(n) = O(2^n) + O(2^n log(2^n)) 
+    [(for eact index either pick the value or leave it, 2^n ways) + (NlogN : sorting , N : 2^n)]
+
+    S(n) = O(2^n)
+*/
+
+//User function Template for Java//User function Template for Java
+class Solution{
+    
+    void func(ArrayList<Integer> arr, int index, int currentSum, ArrayList<Integer> res) {
+        // Base case: when we reach the end of the arr append current sum
+        if(index == arr.size() - 1) {
+            res.add(currentSum);
+            return;
+        }
+        
+        // Include the current element in the subset
+        func(arr, index + 1, arr.get(index) + currentSum, res);
+        // Exclude the current element from the subset
+        func(arr, index + 1, currentSum, res);
+    }
+    
+    ArrayList<Integer> subsetSums(ArrayList<Integer> arr, int N){
+        ArrayList<Integer> res = new ArrayList<>();
+        func(arr, 0, 0, res);
+        Collections.sort(res);
+        return res;
+    }
+}
