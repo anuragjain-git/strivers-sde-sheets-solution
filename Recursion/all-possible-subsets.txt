@@ -1,0 +1,34 @@
+QUESTION - https://leetcode.com/problems/subsets-ii/
+
+// bruteforce
+// T(n) = O(2^n*k) + O(nlogn) [k is size of list while checking res.contains(lst)]
+// S(n) = O(2^n * k) to store every subset of average length k
+
+class Solution {
+    
+    void fun(int[] nums, int index, List<Integer> lst, List<List<Integer>> res) {
+        if(index <= nums.length) {
+            if(!res.contains(lst)) res.add(new ArrayList<>(lst));
+        }
+
+        for(int i = index; i < nums.length; i++) {
+            lst.add(nums[i]);
+            fun(nums, i+1, lst, res);
+            // after adding upto nums.length this removes all the value
+            // then the for loop starts again from next index
+            // basically this excludes the first value from the list then first two value then first three value ... 
+            lst.remove(lst.size() - 1);
+        }
+        
+    }
+    
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> lst = new ArrayList<>();
+        fun(nums, 0, lst, res);
+
+        return res;
+
+    }
+}
