@@ -1,0 +1,46 @@
+QUESTION : https://leetcode.com/problems/combination-sum-ii/
+
+/*
+    Time Complexity :
+    
+    T(n) = O(nlogn) + O(2^target)(i.e pick or not pick) * O(k) (to add the element to datastructure) 
+    S(n) = O(k) * O(x) (total combination)
+*/
+
+class Solution {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        // first sort the array
+        Arrays.sort(candidates);
+        fun(candidates, target, 0, new ArrayList<>(), res);
+        return res;
+    }
+
+    void fun(int[] candidates, int target, int start, List<Integer> combination, List<List<Integer>> res) {
+        if(target == 0) {
+            res.add(new ArrayList<>(combination));
+            return;
+        }
+
+        for(int i = start; i < candidates.length; i++) {
+            // Skip duplicates
+            /*
+                example input : [1,2,2,2,5], target = 5
+                after we get [1,2,2] (remaining next element are 2 and 5) target will be 0, so we will add and return
+                then remove 2 now list is [1,2]and then i++, now i > start, check candidates[i] == candidates[i - 1]
+                here it will check after we removed 2, the elemenet that we are adding now is same as the element we removed if so continue
+            */
+            if (i > start && candidates[i] == candidates[i - 1])
+                continue;
+
+            // Early termination
+            if (candidates[i] > target)
+                break;
+            
+            combination.add(candidates[i]);
+            fun(candidates, target - candidates[i], i+1, combination, res);
+            combination.remove(combination.size() - 1);
+        }
+    }
+
+}
