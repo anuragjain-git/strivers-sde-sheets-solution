@@ -1,0 +1,44 @@
+QUESTION : https://leetcode.com/problems/palindrome-partitioning/
+
+/*
+    Time Complexity -
+
+    T(n) = O((2^n) * (n/2) * k)
+        2^n : all possible substring
+        n/2 : palindrome
+        k   : add list to res
+    S(n) = O(k * x)
+        k : avg length of the lists
+        x : total number of list
+
+*/
+class Solution {
+    public List<List<String>> partition(String s) {
+        List<List<String>> res = new ArrayList<>();
+        fun(s, 0, new ArrayList<String>(), res);
+        return res;
+    }
+
+    public void fun(String s, int prevPartitionIndex, List<String> lst, List<List<String>> res) {
+        if(prevPartitionIndex == s.length()) {
+            res.add(new ArrayList<String>(lst));
+            return;
+        }
+
+        for(int i = prevPartitionIndex; i < s.length(); i++) {
+            if(isPalindrome(s, prevPartitionIndex, i)) {
+                lst.add(s.substring(prevPartitionIndex, i+1));
+                fun(s, i+1, lst, res);
+                lst.remove(lst.size() - 1);
+            }
+        }
+    }
+
+    public boolean isPalindrome(String s, int start, int end) {
+        while(start <= end) {
+            if(s.charAt(start++) != s.charAt(end--))
+                return false;
+        }
+        return true;
+    }
+}
