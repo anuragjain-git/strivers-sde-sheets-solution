@@ -1,7 +1,9 @@
 QUESTION : https://leetcode.com/problems/maximum-product-subarray/
 
+// you can use bruteforce using three for loop and can use better approach by doing in two loop
+
 /*
-    OPTIMAL APPROACH 1:
+    OPTIMAL APPROACH:
 
     T(n) = O(n)
     S(n) = O(1)  
