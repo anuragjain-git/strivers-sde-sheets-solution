@@ -1,0 +1,45 @@
+QUESTION : https://leetcode.com/problems/longest-increasing-subsequence/
+
+/*
+    T(n) = O(n*n)
+    S(n) = o(n*n) + O(n)
+*/
+
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int index = 0;
+        int prevIndex = -1;
+        int dp[][] = new int[nums.length][nums.length + 1];
+        // Initialize dp array with -1 to mark states as not calculated yet
+        for (int row[] : dp) {
+            Arrays.fill(row, -1);
+        }
+        return fun(index, prevIndex, nums, dp);
+    }
+    public int fun(int index, int prevIndex, int nums[], int dp[][]) {
+        if(index == nums.length) return 0;
+
+        // Check if the result for the current state is already calculated
+        if (dp[index][prevIndex + 1] != -1) {
+            return dp[index][prevIndex + 1];
+        }
+
+        // not take the element at current index
+        // if not take, prevIndex remains unchanged
+        // if we take the element don't increase the length, so +0
+        int notTake = 0 + fun(index+1,prevIndex,nums,dp);
+
+        // take the element at current index if nums[index] > nums[prevIndex]
+        // now the previous index will be current index
+        // if we take the element increase the length by +1 
+        // i.e: number of taken element
+        int take = 0;
+        if(prevIndex == -1 || nums[index] > nums[prevIndex]) {
+           take = 1 + fun(index+1,index,nums,dp);
+        }
+
+        dp[index][prevIndex + 1] = Math.max(notTake, take);
+
+        return dp[index][prevIndex + 1];
+    }
+}
