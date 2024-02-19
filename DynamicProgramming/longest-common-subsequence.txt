@@ -1,0 +1,136 @@
+QUESTION - https://leetcode.com/problems/longest-common-subsequence/
+
+APPROACH:
+1. Recursion
+2. DP, Memoization
+3. DP, Tabulation
+4. DP, Space Optimization
+
+/*
+    - Recursion
+    T(n) = O(n*m)
+    S(n) = O(n+m)
+
+    class Solution {
+        public int longestCommonSubsequence(String text1, String text2) {
+            return lcs(text1, text2, text1.length() - 1, text2.length() - 1);
+        }
+        public int lcs(String text1, String text2, int len1, int len2) {
+            if(len1 < 0 || len2 < 0) return 0;
+
+            if(text1.charAt(len1) == (text2.charAt(len2))) return 1 + lcs(text1, text2, len1-1, len2-1);
+            
+            return 0 + Math.max(lcs(text1, text2, len1, len2-1), lcs(text1, text2, len1-1, len2));
+    }
+}
+
+*/
+
+/*  
+
+    - Dynamic Programming, Memoization
+        T(n) = O(n*m)
+        S(n) = O(n*m) + O(n+m) [storing + auxilary stack space]
+
+    class Solution {
+        public int longestCommonSubsequence(String text1, String text2) {
+            int dp[][] = new int[text1.length()][text2.length()];
+            for (int row[] : dp) {
+                Arrays.fill(row, -1);
+            }
+            return lcs(text1, text2, text1.length() - 1, text2.length() - 1, dp);
+        }
+        public int lcs(String text1, String text2, int len1, int len2, int dp[][]) {
+            if(len1 < 0 || len2 < 0){
+                return 0;
+            }
+
+            if(dp[len1][len2] != -1) return dp[len1][len2];
+
+            if(text1.charAt(len1) == (text2.charAt(len2))) {
+                return dp[len1][len2] = 1 + lcs(text1, text2, len1-1, len2-1, dp);
+            }
+
+            return dp[len1][len2] = 0 + Math.max(lcs(text1, text2, len1, len2-1, dp), lcs(text1, text2, len1-1, len2, dp));
+    }
+}
+*/
+
+/*
+    Optimal : DP, tabulation/bottom-up approach to remove auxilary stack space
+
+    T(n) = O(n*m)
+    S(n) = o(n*m)
+
+    Steps:
+        
+        1. copy the base case
+        2. use for loops, i and j
+        3. copy the recursion
+
+    class Solution {
+        public int longestCommonSubsequence(String text1, String text2) {
+            int n = text1.length();
+            int m = text2.length();
+
+            int dp[][] = new int[n+1][m+1];
+
+            for(int i = 0; i <= n; i++) dp[i][0] = 0;
+            for(int j = 0; j <= m; j++) dp[0][j] = 0;
+
+            for(int i = 1; i <= n; i++) {
+                for(int j = 1; j <= m; j++) {
+                    if(text1.charAt(i-1) == text2.charAt(j-1)) {
+                        dp[i][j] = 1 + dp[i-1][j-1];
+                    }
+                    else {
+                        dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+                    }
+                }
+            }
+            return dp[n][m];
+        }
+    }
+*/
+
+/*
+    Optimal : Dynamic Programming, Space Optimization
+    
+    FIRST YOU HAVE NEED TO UNDERSTAND TABULATION APPROACH
+
+    T(n) = O(n*m)
+    S(n) = O(m)
+
+*/
+
+class Solution {
+    public int longestCommonSubsequence(String text1, String text2) {
+        int n = text1.length();
+        int m = text2.length();
+
+        // previously calculated column (from the 2darray initially initiallized 0)
+        int dp[] = new int[m+1];
+
+        for(int i = 1; i <= n; i++) {
+            // Store the value of dp[i-1][j-1] before updating dp[j]
+            int prev = 0;
+            for(int j = 1; j <= m; j++) {
+                // Store the value of dp[i-1][j] before updating dp[j] so it's location is
+                // the above of (row,col) for the current value
+                int temp = dp[j];
+                if(text1.charAt(i-1) == text2.charAt(j-1)) {
+                    // explaination of prev is written below
+                    dp[j] = 1 + prev;
+                }
+                else {
+                    //current value = max(aboveValue,leftValue);
+                    dp[j] = Math.max(temp, dp[j-1]);
+                }
+                // prev = temp (is above of (row,col) for the current value)
+                // above of (row,col) (i.e temp) will be = dp[i-1][j-1] for next value(i.e j++)
+                prev = temp; 
+            }
+        }
+        return dp[m];
+    }
+}
