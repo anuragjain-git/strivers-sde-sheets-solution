@@ -1,0 +1,119 @@
+QUESTION - https://www.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1
+
+/*
+    Recursion
+    T(n) = O(2^n)
+    S(n) = o(n)
+    
+class Solution 
+{ 
+    //Function to return max value that can be put in knapsack of capacity W.
+    static int knapSack(int W, int wt[], int val[], int n) 
+    { 
+         if(n <= 0 || W == 0) {
+             return 0;
+         }
+         int notTake = knapSack(W, wt, val, n-1);
+         int take = Integer.MIN_VALUE;
+         if(wt[n-1] <= W) {
+             take = val[n-1] + knapSack(W-wt[n-1], wt, val, n-1);
+         }
+         return Math.max(notTake, take);
+    } 
+}
+*/
+
+// DP - Memoization
+// T(n) = O(n*W)
+// S(n) = O(n*W) + O(n)
+
+/*
+class Solution 
+{ 
+    //Function to return max value that can be put in knapsack of capacity W.
+    static int knapSack(int W, int wt[], int val[], int n) 
+    { 
+        
+        int[][] dp = new int[n + 1][W + 1];
+        
+        for (int[] row : dp) {
+            Arrays.fill(row, -1);
+        }
+
+        return fun(W, wt, val, n-1, dp);
+    } 
+    static int fun(int W, int wt[], int val[], int n, int[][] dp) {
+        // Check if the result is already computed
+        if (dp[n][W] != -1) {
+            return dp[n][W];
+        }
+
+        // Base case
+        if (n == 0) {
+            if (wt[0] <= W) return val[0];
+            return 0;
+        }
+
+        int notTake = fun(W, wt, val, n - 1, dp);
+        
+        int take = Integer.MIN_VALUE;
+        if (wt[n] <= W) {
+            take = val[n] + fun(W - wt[n], wt, val, n - 1, dp);
+        }
+        
+        dp[n][W] = Math.max(notTake, take);
+        return dp[n][W];
+    }
+}
+*/
+
+// DP, Tabulation
+// T(n) = O(n*W)
+// S(n) = O(n*W)
+
+/*
+class Solution {
+    // Function to return max value that can be put in knapsack of capacity W.
+    static int knapSack(int W, int wt[], int val[], int n) {
+        // Create a table to store the results of subproblems
+        int[][] dp = new int[n + 1][W + 1];
+
+        // Build the table in a bottom-up manner
+        for (int i = 0; i <= n; i++) {
+            for (int w = 0; w <= W; w++) {
+                if (i == 0 || w == 0) {
+                    dp[i][w] = 0;
+                } else if (wt[i - 1] <= w) {
+                    dp[i][w] = Math.max(val[i - 1] + dp[i - 1][w - wt[i - 1]], dp[i - 1][w]);
+                } else {
+                    dp[i][w] = dp[i - 1][w];
+                }
+            }
+        }
+
+        // The result is stored in the bottom-right cell of the table
+        return dp[n][W];
+    }
+}
+*/
+
+// DP, Space Optimization
+// T(n) = O(n*W)
+// S(n) = O(W)
+
+class Solution {
+    // Function to return max value that can be put in knapsack of capacity W.
+    static int knapSack(int W, int wt[], int val[], int n) {
+        
+        int[] prev = new int[W + 1];
+
+        for (int i = 0; i < n; i++) {
+            for (int cap = W; cap >= wt[i]; cap--) {
+                prev[cap] = Math.max(prev[cap], val[i] + prev[cap - wt[i]]);
+            }
+        }
+
+        return prev[W];
+    }
+}
+
