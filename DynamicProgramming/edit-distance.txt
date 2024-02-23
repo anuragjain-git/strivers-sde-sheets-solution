@@ -1,0 +1,153 @@
+QUESTION : https://leetcode.com/problems/edit-distance/
+
+/*
+    Recursion:
+    T(n) = o(3^len1 * 3^len2)
+    S(n) = O(len1+len2) [auxiliary stack space]
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        return fun(word1, word2, word1.length()-1, word2.length()-1);
+    }
+    public int fun(String word1, String word2, int len1, int len2) {
+        if(len1 < 0) return len2+1; // have to insert len2+1 element
+        if(len2 < 0) return len1+1; // have to remove len2+1 element
+
+        if(word1.charAt(len1) == word2.charAt(len2)) {
+            return 0 + fun(word1, word2, len1-1, len2-1);
+        }
+        int insert = 1 + fun(word1, word2, len1, len2 - 1);
+        int delete = 1 + fun(word1, word2, len1 - 1, len2);
+        int replace = 1 + fun(word1, word2, len1 - 1, len2 - 1);
+
+        return Math.min(insert, Math.min(delete, replace));
+    }
+}
+*/
+
+/*
+    DP, Memorization:
+    T(n) = O(len1*len2)
+    S(n) = O(len1*len2) + O(len1+len2) [dp array + auxiliary stack space]
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int dp[][] = new int[word1.length()][word2.length()];
+        for (int[] row : dp) {
+            Arrays.fill(row, -1);
+        }
+        return fun(word1, word2, word1.length()-1, word2.length()-1, dp);
+    }
+    public int fun(String word1, String word2, int len1, int len2, int[][] dp) {
+        
+        if(len1 < 0) return len2+1; // have to insert len2+1 element
+        if(len2 < 0) return len1+1; // have to remove len2+1 element
+        
+        if(dp[len1][len2] != -1) {
+            return dp[len1][len2];
+        }
+
+        if(word1.charAt(len1) == word2.charAt(len2)) {
+            dp[len1][len2] = fun(word1, word2, len1-1, len2-1,dp);
+            return dp[len1][len2];
+        }
+
+        int insert = 1 + fun(word1, word2, len1, len2 - 1,dp);
+        int delete = 1 + fun(word1, word2, len1 - 1, len2,dp);
+        int replace = 1 + fun(word1, word2, len1 - 1, len2 - 1,dp);
+
+        dp[len1][len2] = Math.min(insert, Math.min(delete, replace));
+        return dp[len1][len2];
+    }
+}
+*/
+
+/*
+    DP, Tabulation
+    T(n) = O(len1*len2)
+    S(n) = O(len1*len2) [dp array]
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int len1 = word1.length();
+        int len2 = word2.length();
+
+        // one extra row,col. We are starting indexing from 1 not 0. 
+        int dp[][] = new int[len1+1][len2+1];
+         
+        // below step is similar to what we were doing in memorization :
+        // if(len1 < 0) return len2+1; as it is 1 based indexing it is similar to
+        // if(len1 == 0) return len2; and this is similar to below step
+        
+        for(int i = 0; i <= len1; i++) dp[i][0] = i;
+        for(int j = 0; j <= len2; j++) dp[0][j] = j;
+
+        for(int i = 1; i <= len1; i++) {
+            for(int j = 1; j <= len2; j++) {
+                if(word1.charAt(i-1) == word2.charAt(j-1)) dp[i][j] = dp[i-1][j-1];
+                else {
+                    int insert = 1 + dp[i][j-1];
+                    int delete = 1 + dp[i-1][j];
+                    int replace = 1 + dp[i-1][j-1];
+
+                    dp[i][j] = Math.min(insert, Math.min(delete, replace));
+                }
+            }
+        }
+
+        return dp[len1][len2];
+    }
+}
+*/
+/*
+    DP, Space Optimization
+    T(n) = O(len1*len2)
+    S(n) = O(len2) [dp array]
+*/
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int len1 = word1.length();
+        int len2 = word2.length();
+
+        int dp[] = new int[len2+1];
+
+        // cost of inserting characters of word2
+        for (int j = 0; j <= len2; j++) {
+            dp[j] = j;
+        }
+
+        for(int i = 1; i <= len1; i++) {
+            int prev = dp[0];
+            dp[0] = i;
+            for(int j = 1; j <= len2; j++) {
+                // stores the current element which will be left diagonal(as per 2d array) element for next iteration
+                // we need this to store previous value
+                // we initialize prev to dp[j] when both char is equal, which means we dont need to do any operation
+                // number of operation for this = number of operations needed until previous character 
+                int temp = dp[j];
+
+                if(word1.charAt(i-1) == word2.charAt(j-1)) dp[j] = prev;
+                else {
+                    // if we replace the element we need "prev" number of step to make remaining j-1 string same as 0-i string
+                    // and +1 for replace operation
+                    int replace = 1 + prev;
+                    // if we delete the element we need dp[i-1][j] number of step to convert ((0,col) length of string) to the remaing (0, row-1) length of string
+                    // because delete means same number of step needed to convert REMAINING string, we we had calculated 
+                    // and +1 for delete operation
+                    int delete = 1 + dp[j];
+                    // if we insert the element means we have matched one character of upper string, now we have to check nextleft of one character of the string1
+                    // so dp[i-1][j] means same row,col-1. so now we need dp[0 to row][0 to col-1] number of step as we inserted one element to index of string2 is at same place
+                    // so the value would be left of recently(recently not previously) calculated value for ith length of string, jth-1 length of string
+                    // and +1 for insert operation
+                    int insert = 1 + dp[j - 1];
+
+                    // Minimum of insert, delete, or replace operations
+                    dp[j] = Math.min(insert, Math.min(delete, replace));
+                }
+                prev = temp;
+            }
+        }
+
+        return dp[len2];
+    }
+}
