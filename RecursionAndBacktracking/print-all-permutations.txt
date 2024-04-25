@@ -1,0 +1,42 @@
+QUESTION : https://leetcode.com/problems/permutations/
+
+
+// T(n) = O(N!) + O(N)
+// S(n) = O(N)
+
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        // Recursive function to generate permutations
+        RecPermute(0, nums, ans);
+        return ans;
+    }
+
+    public void RecPermute(int index, int nums[], List<List<Integer>> ans) {
+        // Base case: if index reaches the length of the array, a permutation is complete
+        if(index == nums.length - 1) {
+            List<Integer> permutation = new ArrayList<>();
+            // Add the current permutation to the result list
+            for(int num : nums) {
+                permutation.add(num);
+            }
+            ans.add(permutation);
+            return;
+        }
+        // Iterate through the array, swapping elements to generate permutations
+        for(int i = index; i < nums.length; i++) {
+            swap(i, index, nums); // Swap current element with the element at index
+            RecPermute(index + 1, nums, ans); // Recur with the next index
+            swap(i, index, nums); // Backtrack: swap back to original array configuration
+        }
+    }
+
+    // Method to swap elements at given indices in the array
+    public void swap(int i, int j, int nums[]) {
+        if (i != j) {
+            int temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+        }
+    }
+}
