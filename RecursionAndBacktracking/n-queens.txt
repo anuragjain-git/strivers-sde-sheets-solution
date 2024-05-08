@@ -1,0 +1,177 @@
+QUESTION : https://leetcode.com/problems/n-queens/
+
+// APPROACH - 1
+
+// T(n) = O(N! * 3N) , 3N for validate method
+// S(n) = O(N^2)
+
+class Solution {
+    public List<List<String>> solveNQueens(int n) {
+        // create a 2D matrix chess board of size n * n 
+        char[][] board = new char[n][n];
+
+        // initialize all board position as '.' as mentioned in question
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                board[i][j] = '.';
+            }
+        }
+
+        List<List<String>> res = new ArrayList<List<String>>();
+        // Begin the backtracking process from the first column
+        dfs(0, board, res);
+        return res;
+    }
+
+    static void dfs(int col, char[][] board, List<List<String>> res) {
+        // Base Case : if queen is placed in each column add the board to the result
+        if(col == board.length) {
+            res.add(construct(board));
+            return;
+        }
+
+        // loop to check if queen can be placed in each row
+        for(int row = 0; row < board.length; row++) {
+            // validate method to check if the queen can be placed in that position 
+            if(validate(board, row, col)) {
+                board[row][col] = 'Q';
+                // recusive call to place queen in next column
+                dfs(col+1, board, res);
+                /* IMPORTANT : remove the queen from that row after recursive call so we can 
+                check for next row or another possible position to place queens */
+                board[row][col] = '.';
+            }
+        }
+    }
+
+    // check if any queen is attacking this position
+    static boolean validate(char[][] board, int row, int col) {
+        int duprow = row;
+        int dupcol = col;
+        // left diagonal upward
+        while (row >= 0 && col >= 0) {
+            if(board[row][col] == 'Q') return false;
+            row--;
+            col--;
+        }
+
+        row = duprow;
+        col = dupcol;
+        // left 
+        while(col >= 0) {
+            if(board[row][col] == 'Q') return false;
+            col--;
+        }
+
+        row = duprow;
+        col = dupcol;
+        // left diagonal downword
+        while(row < board.length && col >= 0) {
+            if(board[row][col] == 'Q') return false;
+            row++;
+            col--;
+        }
+
+        // if no other queen is attacking that position
+        return true;
+    }
+
+    // convert 2d matrix board into List<String> 
+    // example : .Q..,..Q. for row1,row2
+    static List<String> construct(char[][] board) {
+        List<String> res = new LinkedList<String>();
+
+        // convert each row of the board to string and add it to a list
+        for(int row = 0; row < board.length; row++) {
+            String s = new String(board[row]); // example:  s = ..Q.
+            res.add(s);
+        }
+        
+        return res;
+    }
+}
+
+// APPROACH - 2
+// SOURCE : https://takeuforward.org/data-structure/n-queen-problem-return-all-distinct-solutions-to-the-n-queens-puzzle/
+
+/* Explaination of checking validation :
+
+- upper diagonal formula: board.length - 1 + col - row: 
+
+To ensure that we get the same value for all cells along the same upper diagonal and map each diagonal to a unique index in the upperDiagonal array.
+
+- same for lower diagonal
+
+- leftRow : An array of length n (size of the board) where each index represents a row. If leftRow[row] is 1, it means that row already has a queen placed in a previous column, and if it is 0, the row is free.
+
+*/
+
+// T(n) = O(N!) 
+// S(n) = O(N^2)
+
+class Solution {
+    public List<List<String>> solveNQueens(int n) {
+        // create a 2D matrix chess board of size n * n 
+        char[][] board = new char[n][n];
+
+        // initialize all board position as '.' as mentioned in question
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                board[i][j] = '.';
+            }
+        }
+
+        List<List<String>> res = new ArrayList<List<String>>();
+        // Arrays to keep track of which rows and diagonals are occupied
+        int[] leftRow = new int[n];
+        int[] upperDiagonal = new int[2 * n - 1];
+        int[] lowerDiagonal = new int[2 * n - 1];
+        // Begin the backtracking process from the first column
+        solve(0, board, res, leftRow, lowerDiagonal, upperDiagonal);
+        return res;
+    }
+
+    static void solve(int col, char[][] board, List<List<String>> res, int leftRow[], int lowerDiagonal[], int upperDiagonal[]) {
+        // Base Case : if queen is placed in each column add the board to the result
+        if(col == board.length) {
+            res.add(construct(board));
+            return;
+        }
+
+        // Iterate through each row in the current column to find a valid position for a queen
+        for(int row = 0; row < board.length; row++) {
+            // Check if the current position is safe based on the rows and diagonals
+            if(leftRow[row] == 0 && lowerDiagonal[row + col] == 0 && upperDiagonal[board.length - 1 + col - row] == 0) {
+                // Place the queen in the current row and column
+                board[row][col] = 'Q';
+                // Mark the row and diagonals as occupied
+                leftRow[row] = 1;
+                lowerDiagonal[row + col] = 1;
+                upperDiagonal[board.length - 1 + col - row] = 1;
+                
+                // Recursively attempt to place queens in the next column
+                solve(col + 1, board, res, leftRow, lowerDiagonal, upperDiagonal);
+                
+                // After recursion, backtrack: remove the queen and mark the row and diagonals as unoccupied
+                board[row][col] = '.';
+                leftRow[row] = 0;
+                lowerDiagonal[row + col] = 0;
+                upperDiagonal[board.length - 1 + col - row] = 0;
+            }
+        }
+    }
+
+    // convert 2d matrix board into List<String> 
+    // example : .Q..,..Q. for row1,row2
+    static List<String> construct(char[][] board) {
+        List<String> res = new LinkedList<String>();
+
+        // convert each row of the board to string and add it to a list
+        for(int row = 0; row < board.length; row++) {
+            String s = new String(board[row]); // example:  s = ..Q.
+            res.add(s);
+        }
+        
+        return res;
+    }
+}
