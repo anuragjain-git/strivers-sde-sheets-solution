@@ -1,0 +1,60 @@
+QUESTION : https://www.geeksforgeeks.org/problems/m-coloring-problem-1587115620/1
+
+// T(n) = O(n^m), for n nodes we are trying m color
+// S(n) = O(n), size of color array, total number of nodes can be filled with same number of color (distinct color for each node)
+
+class solve {
+    // Function to determine if graph can be coloured with at most M colours
+    // such
+    // that no two adjacent vertices of graph are coloured with same colour.
+    public boolean graphColoring(boolean graph[][], int m, int n) {
+        // m = total number of color
+        // n = total number of node
+        return solve(0, graph, new int[n], n, m);
+    }
+    
+    // for each node check all the color and return true if any color matches else return false
+    private static boolean solve(int node, boolean graph[][], int color[], int n, int m) {
+        // if all nodes are colored return true
+        if(node == n) return true;
+        
+        // for each node check all the color, if a color is matched return true no need to check other color 
+        for(int i = 1; i <= m; i++) {
+            
+            // check if the color can be put on that node
+            if(isSafe(node, graph, color, i)) {
+                // if color can be put add color to the Color array
+                // color array stores which color is put on the nodes
+                color[node] = i;
+                
+                // if for current node valid color is found recursively can the solve function for next node 
+                if(solve(node + 1, graph, color, n, m) == true) return true;
+                
+                // in previous node we put and valid color and called solve method to check for next node
+                // if no color is valid to put on this node that means, the color we added in previous node dosen't provide valid coloring for all node
+                // so remove color we put on the previous node
+                color[node] = 0;
+            }
+        }
+        
+        // if none of the color can be put in any node return false
+        return false;
+    }
+    
+    // check any adjacent node have disctict color or not, if adjacent node have color other that we want to put on current node then return true
+    public static boolean isSafe(int node, boolean graph[][], int color[], int col){
+        // we have to check if color : col is valid for node: node
+        // so check if any adjacent node ahve same color : col
+        for(int i = 0; i < graph.length; i++) 
+            
+            // graph[x][y] checks if there is an edge between node : node and all other nodes:i, and 
+            // if there is a vertex between both the node check if the adjacent node have same color : col that we are verifying
+            if(graph[node][i] && color[i]==col) 
+                
+                // return false if any adjacent node have same color 
+                return false;
+        
+        // return true if no adjacent node have the color : col
+        return true;
+    }
+}
