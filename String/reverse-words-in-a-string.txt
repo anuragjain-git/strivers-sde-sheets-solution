@@ -1,0 +1,75 @@
+QUESTION - https://leetcode.com/problems/reverse-words-in-a-string/
+
+/*
+APPROACH - 1 BRUTEFORCE
+
+Time Complexity: O(N), Traversing the entire string
+Space Complexity: O(N), Stack and ans variable
+
+*/
+
+class Solution {
+    public String reverseWords(String s) {
+        Stack<String> st = new Stack<String>();
+        String word = "";
+        for(int i = 0; i < s.length(); i++) {
+            // keep adding the character to a variable until there is a space
+            // if a space is found add the word to the stack and change the word variable to "" for next word
+            if(s.charAt(i) == ' ') {
+                if(!word.isEmpty()) {
+                    st.push(word);
+                    word = "";
+                }
+            }
+            else word += s.charAt(i);
+        }
+        if(!word.isEmpty()) st.push(word);
+        String ans = "";
+        // stack follows LIFO so pop each word and add it to ans variable 
+        while(st.size() != 1) {
+            ans += st.peek() + " ";
+            st.pop();
+        }
+        // last word will not have space after it
+        ans += st.peek();
+        return ans;
+    }
+}
+
+/*
+    Optimal Approach - Without stack
+    Time Complexity: O(N), length of string
+    Space Complexity: O(1), Constant Space
+
+*/
+
+class Solution {
+    public String reverseWords(String s) {
+        // ans will store the reversed words
+        String ans = "";
+        // temp variable to store each word  
+        String temp = "";
+
+        for(int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            // if we found a space
+            if(ch == ' ') {
+                // if ans not is empty, as we have to reverse the words we will add temp before answer if temp is not empty
+                if(!ans.isEmpty()) {
+                    if(!temp.isEmpty()) ans = temp + " " + ans;
+                }
+                // if answer is empty replace the ans with temp
+                else ans = temp;
+                // after updating ans, set temp as empty for new word 
+                temp = "";
+            }
+            // append each character until each space
+            else temp += ch;
+        }
+        if(!temp.isEmpty()) {
+            if(!ans.isEmpty()) ans = temp + " " + ans;
+            else ans = temp;
+        }
+        return ans;
+    }
+}
