@@ -1,0 +1,101 @@
+QUESTION : https://leetcode.com/problems/word-break-ii/
+
+// Time Complexity : O(2^n), all possible substrings of s.
+// Space Complexity : O(n)
+
+// Time Complexity : O(2^n), all possible substrings of s.
+// Space Complexity : O(n)
+
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        // dict stores unique words from wordDict
+        Set<String> dict = new HashSet<>(wordDict);
+        // cur list stores the valid words
+        List<String> cur = new ArrayList<>();
+        // res stores the result
+        List<String> res = new ArrayList<>();
+        solve(s, 0, dict, cur, res);
+        return res;
+    }
+
+    private void solve(String s, int start, Set<String> dict, List<String> cur, List<String> res) {
+        // base case: if index reaches to the end of the string add the sentence(words separated by space) to res.
+        if(start == s.length()) {
+            // if cur is not empty
+            if(cur.size() > 0) {
+                // note: we have to add the complete sentence not words, so we will first add the words separated by space to sb.
+                StringBuilder sb = new StringBuilder();
+                // iterate through cur list to add all the word separated by space to sb
+                for(int j = 0; j < cur.size(); j++) {
+                    // if we have already added the first word to sb then after each word we add, add a space
+                    if(j > 0) sb.append(' ');
+                    // add the word to sb
+                    sb.append(cur.get(j));
+                }
+                // after adding add the sentence to res list
+                res.add(sb.toString());
+            }
+            return;
+        }
+
+        // iterate through all the word and add it to sb. (format: "word1 word2 word3")
+        for(int end = start + 1; end <= s.length(); end++) {
+            if(dict.contains(s.substring(start, end))) {
+                cur.add(s.substring(start, end));
+                // resursive call to find next word
+                solve(s, end, dict, cur, res);
+                // after recursion call to add all words remove each word one by one from last, 
+                // loop will keep checking new word after removing
+                cur.remove(cur.size() - 1);
+            }
+        }
+    }
+}
+
+
+// APPROACH - 2
+// Dynamic Programming 
+// Time Complexity : O(n^2),  the nested iteration over suffixes and the O(n) time complexity for substring extraction.
+// Space Complexity : O(n^2)
+
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        // Create a set for efficient lookup
+        Set<String> dict = new HashSet<>(wordDict);
+        // Create a map to store the valid sentence formations for each starting index
+        Map<Integer, List<String>> dp = new HashMap<>();
+        // Call the helper function to perform dynamic programming
+        return solve(s, 0, dict, dp);
+    }
+
+    private List<String> solve(String s, int start, Set<String> dict, Map<Integer, List<String>> dp) {
+        // If result for current starting index is already computed, returned it from the map
+        if(dp.containsKey(start)) return dp.get(start);
+        // store valid sentence formation for current index
+        List<String> result = new ArrayList<>();
+        // base case: If the current starting index reaches the end of the string, add an empty string to the result
+        if(start == s.length()) {
+            result.add("");
+            return result;
+        }
+
+        // Iterate over all possible suffixes starting from the current starting index
+        for(int end = start + 1; end <= s.length(); end++) {
+            // Extract the prefix substring from the current starting index to the current end index
+            String prefix = s.substring(start, end);
+            // If the prefix substring is in the dictionary, recursively compute the valid sentence formations for all possible suffix
+            if(dict.contains(prefix)) {
+                List<String> suffixes = solve(s, end, dict, dp);
+                // For each valid suffix, combine it with the prefix to form a valid sentence
+                for (String suffix : suffixes) {
+                    result.add(suffix.isEmpty() ? prefix : prefix + " " + suffix);
+                }
+            }
+        }
+
+        // Memoize the result for the current starting index by storing it in the map
+        dp.put(start, result);
+        // Return the valid sentence formations for the current starting index
+        return result;
+    }
+}
