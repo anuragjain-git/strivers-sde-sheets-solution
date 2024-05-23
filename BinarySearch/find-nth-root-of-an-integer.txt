@@ -1,0 +1,73 @@
+QUESTION : https://www.naukri.com/code360/problems/1062679
+
+// BruteForce, linear search
+// Time Complexity T(N) = O(M)
+// Space Complexity S(N) = O(1)
+
+public class Solution {
+    public static long func(int b, int exp) {
+        long  ans = 1;
+        long base = b;
+        while(exp > 0) {
+            if (exp % 2 == 1) {
+                exp--;
+                //Multiply ans by base. This is because b^n * b = b^n+1
+                //Example:  If exp is 3 (odd), it becomes 2 and base is multiplied with the ans.
+                ans = ans * base;
+            } 
+            else {
+                exp /= 2;
+                //Square the base (i.e., base = base * base). This is because b^(2k)= (b^2)^k. 
+                //Example: If exp is 4 (even), it becomes 2, and base is squared.
+                base = base * base;
+            }
+        }
+        return ans;
+    }
+
+    public static int NthRoot(int n, int m) {
+        //Using linear search
+        //Nth root must lie within 1 to m
+        for (int i = 1; i <= m; i++) {
+            long val = func(i, n);
+            if (val == (long)m) return i;
+            else if (val > (long)m) break;
+        }
+        return -1;
+    }
+}
+
+// Optimal Solution, Binary Search
+// Time Complexity T(N) = O(N * logM), N : multiply each number N times, log(M): binary search 
+// Space Complexity S(N) = O(1)
+
+public class Solution {
+    public static int multiply(int mid, int n, int m) {
+        //Return 1 if mid^n == m
+        //Return 0 if mid^n < m
+        //Return 2 if mid^n > m
+        long ans = 1;
+        for(int i = 1; i <= n; i++) {
+            ans = ans * mid;
+            if(ans > m) return 2;
+        }
+        if(ans == m) return 1;
+        return 0;
+    }
+
+    public static int NthRoot(int n, int m) {
+        int low = 1, high = m;
+        while(low <= high) {
+            int mid = (low + high) / 2;
+            //function to check if mid^n is equal to m
+            int midN = multiply(mid, n, m);
+            //if mid^n is equal to m, return mid
+            if(midN == 1) return mid;
+            //if mid^n is less than m, Nth room lies after mid
+            else if (midN == 0) low = mid + 1;
+            //if mid^n is greater than m, Nth room before after mid 
+            else high = mid - 1;
+        }
+        return -1;
+    }
+}
