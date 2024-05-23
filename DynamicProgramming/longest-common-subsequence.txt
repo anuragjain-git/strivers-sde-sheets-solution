@@ -2,9 +2,9 @@ QUESTION - https://leetcode.com/problems/longest-common-subsequence/
 
 APPROACH:
 1. Recursion
-2. DP, Memoization
-3. DP, Tabulation
-4. DP, Space Optimization
+2. Memoization
+3. Tabulation
+4. Space Optimization
 
 /*
     - Recursion
@@ -96,7 +96,7 @@ APPROACH:
 /*
     Optimal : Dynamic Programming, Space Optimization
     
-    FIRST YOU HAVE NEED TO UNDERSTAND TABULATION APPROACH
+    FIRST YOU HAVE TO UNDERSTAND TABULATION APPROACH
 
     T(n) = O(n*m)
     S(n) = O(m)
