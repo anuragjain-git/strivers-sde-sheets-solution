@@ -1,0 +1,78 @@
+QUESTION : https://www.geeksforgeeks.org/problems/median-in-a-row-wise-sorted-matrix1527/
+
+// BruteForce 
+// Time Complexity = O(R*M) + O(R*M * log(R*M)), [traversing + sorting]
+// Space Complexity = O(R*M) 
+
+class Solution {
+    int median(int matrix[][], int R, int C) {
+        //arr to store all the elements
+        int arr[] = new int[R*C];
+        int idx = 0;
+        //traverse through matrix and add each element to arr
+        for(int i = 0; i < R; i++) {
+            for(int j = 0; j < C; j++) {
+                arr[idx] = matrix[i][j];
+                idx++;
+            }
+        }
+        //sort arr
+        Arrays.sort(arr);
+        //return mid element
+        return arr[R*C/2];
+    }
+}
+
+// Optimal - BinarySearch
+// Time Complexity: O(row*log col) since the upper bound function takes log c time.
+// Space Complexity: O(1)
+
+class Solution {
+    int median(int matrix[][], int R, int C) {
+        //Initially assign low with the largest value
+        int low = Integer.MAX_VALUE;
+        //Initially assign high with the smallest value
+        int high = Integer.MIN_VALUE;
+        int lengthOfRow = matrix[0].length - 1;
+        //Find smallest and largest element, each row is sorted,
+        //so smallest element will be in first coloum and largest element will be in the last column
+        for(int i = 0; i < R; i++) {
+            low = Math.min(low, matrix[i][0]);
+            high = Math.max(high, matrix[i][lengthOfRow]);
+        }
+        //From total number of elements we have to exclude req number of smallest elements
+        int req = (R * C) / 2;
+        // low is the smallest element and high is the highest element
+        while(low <= high) {
+            int x = (low + high) / 2;
+            //small = total number of element <= x(avg of lowest and highest value)
+            int small = blackbox(matrix, R, C, x);
+            //If the number of elements <= x is less than or equal to req(we have to exclude req number of smallest element),
+            //it means we need to search in the higher half.
+            if(small <= req) low=x+1;
+            // if for a x, small becomes > req, lower the high 
+            else high=x-1;
+        }
+        //low will be pointing to next element after excluding req number of element
+        return low;
+    }
+    
+    int blackbox(int matrix[][], int row, int col, int x) {
+        int cnt = 0;
+        //count total number of numbers less than x in each row
+        for(int i = 0; i < row; i++) {
+            cnt += upperbound(matrix[i], x, col);
+        }
+        return cnt;
+    }
+    //calculate total number of element <= x
+    int upperbound(int matrix[], int x, int col) {
+        int l = 0, h = col-1;
+        while(l <= h) {
+            int mid = (l + h) / 2;
+            if(matrix[mid] <= x) l = mid+1;
+            else h = mid-1;
+        }
+        return l;
+    }
+}
