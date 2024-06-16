@@ -1,0 +1,68 @@
+QUESTION : https://leetcode.com/problems/search-in-rotated-sorted-array/
+
+/*
+    Bruteforce Approach: 
+    - traverse through nums and find the index of the target. 
+    - if target not found return -1.
+    
+    Time Complexity = O(N)
+    Space Complexity = O(1)
+
+class Solution {
+    public int search(int[] nums, int target) {
+        for(int i = 0; i < nums.length; i++) if(nums[i] == target) return i;
+        return -1;
+    }
+}
+
+*/
+
+/*
+    Optimal Approach:
+    - check if the left sub array is sorted, i.e nums[low]<=nums[mid]
+    - if sorted check if target element is between nums[low] and nums[mid]
+    - if yes move high to mid - 1, if no move low to mid + 1
+
+    - check if the right sub array is sorted, i.e if left subpart is not sorted right part will always be sorted
+    - check if target element is between nums[mid] and nums[high]
+    - if yes move low to mid + 1, if no move low to mid - 1
+
+    Time Complexity = O(log N)
+    Space Complexity = O(1)
+*/
+
+class Solution {
+    public int search(int[] nums, int target) {
+        int low = 0, high = nums.length - 1;
+
+        while(low <= high) {
+            int mid = (low + high) / 2;
+            
+            // Base Case:
+            if(nums[mid] == target) return mid;
+
+            // if left part is sorted
+            if(nums[low] <= nums[mid]) {
+                // check if target element lies in the left part
+                if(nums[low] <= target && target <= nums[mid]) {
+                    high = mid - 1;
+                }
+                else { // remove left part
+                    low = mid + 1;
+                }
+            }
+            // if right part is sorted
+            else {
+                // check if target element lies in the right part
+                if(nums[mid] <= target && target <= nums[high]) {
+                    low = mid + 1;
+                }
+                else { // remove right part
+                    high = mid - 1;
+                }
+            }
+        } 
+        // Dummy return statement
+        return -1;
+    }
+}
