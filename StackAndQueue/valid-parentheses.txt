@@ -1,0 +1,26 @@
+QUESTION : https://leetcode.com/problems/valid-parentheses/
+
+/**
+
+Time Complexity: O(N)
+
+Space Complexity: O(N)
+
+ */
+
+class Solution {
+    public boolean isValid(String s) {
+        Stack<Character> st = new Stack<>();
+        for(char it : s.toCharArray()) {
+            if(it == '(' || it == '{' || it == '[') st.push(it);
+            else {
+                if(st.empty()) return false;
+                if((it == ')' && st.peek() == '(') || (it == '}' && st.peek() == '{') || (it == ']' && st.peek() == '[')) {
+                    st.pop();
+                }
+                else return false;
+            }
+        }
+        return st.empty();
+    }
+}
